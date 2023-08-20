@@ -1,0 +1,86 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cephalometric Analysis</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* Custom styles for centering */
+        .center-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Adjust if needed */
+        }
+        
+        .text-center-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-family: 'Roboto', sans-serif; /* Change font */
+            color: #333; /* Change text color */
+            padding: 2rem; /* Add padding */
+        }
+
+        /* Increase spacing between components */
+        .text-center-column p {
+            margin: 1rem 0;
+        }
+
+        /* Animate the button on hover */
+        .btn-primary {
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+            box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1); /* Add shadow */
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Set background color */
+        body {
+            background-color: #ffffff;
+        }
+
+        /* Custom styles for h1 */
+        h1 {
+            font-weight: bold; /* Make the h1 more bold */
+            margin-bottom: 1rem; /* Add spacing below h1 */
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container-md center-content">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{% static 'images/back1.jpg' %}" class="img-fluid" alt="Sample Image">
+            </div>
+            <form action="{% url 'upload' %}" class="col-md-6 text-center-column">
+                <div class='mb-3 '>
+                    <h1>Cephalometric Analysis</h1>
+                    <h3>AI-based website,</h3>
+                    <h3>for Cephalometric analysis.</h3>
+                </div>
+                <button type='submit' class="btn btn-warning btn-lg mt-4 shadow-lg">Start Analyzing with AI</button>
+            </form>
+        </div>
+    </div>
+    
+    <footer class="text-center">
+        <p>&copy; 2023 Cephalometric Analysis App</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

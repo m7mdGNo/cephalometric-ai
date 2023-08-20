@@ -1,0 +1,174 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cephalometric Analysis</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* Custom styles for centering */
+        .center-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Adjust if needed */
+        }
+        
+        .text-center-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-family: 'Roboto', sans-serif; /* Change font */
+            color: #333; /* Change text color */
+            padding: 2rem; /* Add padding */
+        }
+
+        /* Increase spacing between components */
+        .text-center-column p {
+            margin: 1rem 0;
+        }
+
+        /* Animate the button on hover */
+        .btn-primary {
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+            box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1); /* Add shadow */
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Set background color */
+        body {
+            background-color: #f2f2f2f;
+        }
+
+        /* Custom styles for h1 */
+        h1 {
+            font-weight: bold; /* Make the h1 more bold */
+            margin-bottom: 1rem; /* Add spacing below h1 */
+        }
+        h2 {
+            font-weight: bold; /* Make the h1 more bold */
+            margin-bottom: 1rem; /* Add spacing below h1 */
+        }
+
+        /* Custom styles for buttons */
+        .full-width-button {
+            width: 100%; /* Set width to 100% */
+        }
+
+        #uploaded-image {
+            max-width: 800px;
+            max-height: 800px;
+            width: auto;
+            height: auto;
+        }
+        /* Set a maximum width for the uploaded image to prevent excessive scaling on large screens */
+        #uploaded-image {
+            max-width: 80%;
+        }
+
+        /* Adjust margins for improved spacing on smaller devices */
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="center-content">
+        <div class="row">
+            <div class="col-md-8">
+                <img id="uploaded-image" src="{% static 'images/test5.jpg' %}" class="img-fluid" alt="Sample Image">
+                
+            </div>
+            <div class="col-md-4 text-center-column">
+                <div class='mb-3 '>
+                    <h2>AI-Based Cephalometric Analysis</h2>
+                </div>
+                
+                <div class='mb-3 mt-2'>
+                    <h4>Upload your image</h4>
+                </div>
+
+                <input type="file" id="image-input" style="display: none;">
+                <button class="btn btn-light btn-lg mt-2 shadow-lg full-width-button" onclick="document.getElementById('image-input').click();">Upload Image</button>
+                
+                <button type='submit' class="btn btn-warning btn-lg mt-4 mb-4 shadow-lg full-width-button" onclick="analyze();">Start Analyzing</button>
+                
+                <div class='mb-3 mt-2'>
+                    <h4>Download Analysis Report</h4>
+                </div>
+                <button id="download-button" class="btn btn-light btn-lg mt-2 shadow-lg full-width-button" onclick="window.location.href='/download/';">Download Report</button>
+
+            </div>
+        </div>
+    </div>
+    
+    <footer class="text-center">
+        <p>&copy; 2023 Cephalometric Analysis App</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script>
+        document.getElementById('image-input').addEventListener('change', function(event) {
+            const image = document.getElementById('uploaded-image');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            document.getElementById('download-button').style.display = 'block';
+        });
+    </script>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+               const cookies = document.cookie.split(';');
+               for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                     break;
+                  }
+               }
+            }
+            return cookieValue;
+        }
+
+        function analyze() {
+            const input = document.getElementById('image-input');
+            const formData = new FormData();
+            formData.append('image', input.files[0]);
+    
+            fetch("{% url 'analyze' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                const img = document.getElementById('uploaded-image');
+                img.src = `data:image/jpeg;base64,${data.image}`;
+            })
+            .catch(error => {
+                console.error('Error analyzing image:', error);
+            });
+        }
+        
+    </script>
+    
+</body>
+</html>
