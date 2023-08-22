@@ -1,4 +1,4 @@
-import cv2
+# import cv2
 import math
 
 
@@ -7,10 +7,10 @@ def get_middle(x1, y1, w, h):
     newy = (2 * y1 + h) / 2
     return [int(newx), int(newy)]
 
-def draw_circle(img,center,color):
-    cv2.circle(img, (center[0], center[1]), 5, color, -1)
-    cv2.circle(img, (center[0], center[1]), 5, (0, 0, 0), 2)
-    return img
+# def draw_circle(img,center,color):
+#     cv2.circle(img, (center[0], center[1]), 5, color, -1)
+#     cv2.circle(img, (center[0], center[1]), 5, (0, 0, 0), 2)
+#     return img
 
 def get_distance(p1,p2):
     return math.sqrt((p1[0]-p2[0])**2+(p1[1]-p2[1])**2)

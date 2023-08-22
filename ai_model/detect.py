@@ -1,5 +1,5 @@
 from .utils import get_middle
-import cv2
+# import cv2
 
 def detect_landmarks(frame, model,imgsz=800,conf=0.01,iou=0.07):
     names = {
@@ -40,8 +40,8 @@ def detect_landmarks_roboflow(img,model,imgsz,conf=1,overlap=7):
             19: 'Ar',2: 'N',3: 'Or',4: 'Po',5: 'A',
             6: 'B',7: 'Pg',8: 'Mb',9: 'Gn'
             }
-    img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-    img = cv2.resize(img,(imgsz,imgsz))
+    # img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+    # img = cv2.resize(img,(imgsz,imgsz))
     results = model.predict(img, confidence=1,overlap=7).json()
     points = {}
     landmarks = {}
