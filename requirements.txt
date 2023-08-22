@@ -1,5 +1,5 @@
-torch
-torchvision
+torch==1.6.0+cpu
+torchvision==0.7.0+cpu
 Django==4.2.4
 numpy==1.25.2
 opencv-python==4.8.0.76
