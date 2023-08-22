@@ -43,7 +43,7 @@ def detect_landmarks_roboflow(img,model,imgsz,conf=1,overlap=7):
             }
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
     img = cv2.resize(img,(imgsz,imgsz))
-    results = model.predict(img, confidence=20,overlap=10).json()
+    results = model.predict(img, confidence=1,overlap=7).json()
     points = {}
     landmarks = {}
     for pred in results['predictions']:
