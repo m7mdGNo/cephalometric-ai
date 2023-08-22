@@ -14,6 +14,7 @@
             align-items: center;
             min-height: 100vh; /* Adjust if needed */
         }
+
         
         .text-center-column {
             display: flex;
@@ -21,6 +22,17 @@
             justify-content: center;
             align-items: center;
             text-align: center;
+            font-family: 'Roboto', sans-serif; /* Change font */
+            color: #333; /* Change text color */
+            padding: 2rem; /* Add padding */
+        }
+
+        .text-top-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: top;
+            align-items: top;
+            text-align: top;
             font-family: 'Roboto', sans-serif; /* Change font */
             color: #333; /* Change text color */
             padding: 2rem; /* Add padding */
@@ -45,7 +57,7 @@
 
         /* Set background color */
         body {
-            background-color: #f2f2f2f;
+            background-color: #ffffff;
         }
 
         /* Custom styles for h1 */
@@ -89,31 +101,38 @@
     <div class="center-content">
         <div class="row">
             <div class="col-md-8">
-                <img id="uploaded-image" src="{% static 'images/test5.jpg' %}" class="img-fluid" alt="Sample Image">
-                
+                <canvas id="draw-canvas" class="img-fluid" style="width:800px; height:800px" alt="Analyzed Image"></canvas>
             </div>
-            <div class="col-md-4 text-center-column">
-                <div class='mb-3 '>
-                    <h2>AI-Based Cephalometric Analysis</h2>
-                </div>
-                
-                <div class='mb-3 mt-2'>
-                    <h4>Upload your image</h4>
-                </div>
+            <div class="col-md-4 text-center-column ">
+                <div class="row-md-6">
+    
+                    <input type="file" id="image-input" style="display: none;">
+                    <button class="btn btn-light btn-lg mb-2 shadow-lg full-width-button" style="background-color:#b5b3b3;" onclick="document.getElementById('image-input').click();">Upload Image</button>
+    
+                    <button type="submit" class="btn btn-warning btn-lg mb-2 shadow-lg full-width-button" onclick="detect();">Detect Points with A.I.</button>
+    
+                    <div class="input-group mb-2">
+                        <input type="text" id="point-name-input" placeholder="Enter point name" class="form-control">
+                        <div class="input-group-append">
+                            <button class="btn btn-success" onclick="addCustomPoint()">Add Point</button>
+                        </div>
+                    </div>
+    
+                    <div class="d-flex justify-content-between mb-2">
+                        <button id="download-button" class="btn btn-lg btn-info shadow-lg full-width-button" onclick="window.location.href='/download/';">Download Report</button>
+                        <button class="btn btn-lg btn-danger shadow-lg full-width-button" onclick="detect();">Reset points</button>
+                    </div>
+                    <input type="text" id="image-name-input" placeholder="Enter patient name" class="form-control">
+                    <button type="submit" class="btn btn-primary btn-lg mb-2 shadow-lg full-width-button" onclick="save()">Save</button>
 
-                <input type="file" id="image-input" style="display: none;">
-                <button class="btn btn-light btn-lg mt-2 shadow-lg full-width-button" onclick="document.getElementById('image-input').click();">Upload Image</button>
-                
-                <button type='submit' class="btn btn-warning btn-lg mt-4 mb-4 shadow-lg full-width-button" onclick="analyze();">Start Analyzing</button>
-                
-                <div class='mb-3 mt-2'>
-                    <h4>Download Analysis Report</h4>
                 </div>
-                <button id="download-button" class="btn btn-light btn-lg mt-2 shadow-lg full-width-button" onclick="window.location.href='/download/';">Download Report</button>
-
+                <div class="row-md-6 mt-4">
+                    <canvas id="zoom-canvas" class="img-fluid" style="width:400px; height:400px; background-color:#f2f2f2;" alt="Analyzed Image"></canvas>
+                </div>
             </div>
         </div>
     </div>
+    
     
     <footer class="text-center">
         <p>&copy; 2023 Cephalometric Analysis App</p>
@@ -122,15 +141,26 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{% static 'js/script.js' %}"></script>
-    <script>
-        document.getElementById('image-input').addEventListener('change', function(event) {
-            const image = document.getElementById('uploaded-image');
-            image.src = URL.createObjectURL(event.target.files[0]);
-            document.getElementById('download-button').style.display = 'block';
-        });
-    </script>
+
+
 
     <script>
+        /////////////////////////////////////////
+        document.getElementById('image-input').addEventListener('change', function(event) {
+            const canvas = document.getElementById('draw-canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.src = URL.createObjectURL(event.target.files[0]);
+            
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+            };
+    
+            document.getElementById('download-button').style.display = 'block';
+        });
+        //////////////////////////////////////////
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -145,12 +175,166 @@
             }
             return cookieValue;
         }
+        ////////////////////////////////////////////////////////////
+        function draw_line(ctx,canvas,A,B,color){
+            ctx.beginPath();
+            ctx.moveTo(window.pred_points[A][0] * canvas.height, window.pred_points[A][1] * canvas.width);
+            ctx.lineTo(window.pred_points[B][0] * canvas.height, window.pred_points[B][1] * canvas.width);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+        ////////////////////////////////////////////////////////////
+        function calculateAngle(pointA, pointB, pointC, pointD) {
+            const vectorAB = [
+                window.pred_points[pointB][0] - window.pred_points[pointA][0],
+                window.pred_points[pointB][1] - window.pred_points[pointA][1]
+            ];
+        
+            const vectorCD = [
+                window.pred_points[pointD][0] - window.pred_points[pointC][0],
+                window.pred_points[pointD][1] - window.pred_points[pointC][1]
+            ];
+        
+            const dotProduct = vectorAB[0] * vectorCD[0] + vectorAB[1] * vectorCD[1];
+            const magnitudeAB = Math.sqrt(vectorAB[0] ** 2 + vectorAB[1] ** 2);
+            const magnitudeCD = Math.sqrt(vectorCD[0] ** 2 + vectorCD[1] ** 2);
+        
+            const cosAngle = dotProduct / (magnitudeAB * magnitudeCD);
+            const angleInRadians = Math.acos(cosAngle);
+            const angleInDegrees = (angleInRadians * 180) / Math.PI;
+        
+            return angleInDegrees;
+        }
+        function calculateIntersection(A, B, C, D) {
+            const pointA = [window.pred_points[A][0], window.pred_points[A][1]];
+            const pointB = [window.pred_points[B][0], window.pred_points[B][1]];
+            const pointC = [window.pred_points[C][0], window.pred_points[C][1]];
+            const pointD = [window.pred_points[D][0], window.pred_points[D][1]];
+        
+            const x1 = pointA[0];
+            const y1 = pointA[1];
+            const x2 = pointB[0];
+            const y2 = pointB[1];
+            const x3 = pointC[0];
+            const y3 = pointC[1];
+            const x4 = pointD[0];
+            const y4 = pointD[1];
+        
+            const denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+        
+            if (denominator === 0) {
+                // Lines are parallel or coincident
+                return null;
+            }
+        
+            const intersectionX = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denominator;
+            const intersectionY = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denominator;
+        
+            return [intersectionX, intersectionY];
+        }
+        
+        
+        ////////////////////////////////////////////////////////////
+        function write_text(ctx,canvas,x,y,key,color){
+            // Draw text label
+            ctx.font = "20px Georgia";
+            ctx.fillStyle = color;
+            ctx.fillText(key, x + 10, y - 10);
+        }
+        function visualize_point(ctx,canvas,x,y,color){
+            ctx.beginPath();
+            ctx.arc(x, y, canvas.height / 200, 0, 2 * Math.PI);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.closePath();
+        }
+        function get_analytics(ctx,canvas){
+            //find angle between ANB and write text in left half of canvas
+            try {
 
-        function analyze() {
+                const anb_angle = calculateAngle('A','N','B',"N")
+                write_text(ctx,canvas,25,60,`○ ANB: ${anb_angle.toFixed(2)}°`,'white')
+                draw_line(ctx,canvas,'A',"N",'blue')
+                draw_line(ctx,canvas,'N',"B",'blue')
+            }
+            catch (error) {
+                console.error('Not all points detected', error);
+            }
+
+            try {
+                
+                //find angle between SNA and write text in left half of canvas
+                const sna_angle = calculateAngle('S','N','A','N')
+                write_text(ctx,canvas,25,100,`○ SNA: ${sna_angle.toFixed(2)}°`,'white')
+                draw_line(ctx,canvas,'S',"N",'blue')
+                draw_line(ctx,canvas,'N',"A",'blue')
+            }
+            catch (error) {
+                console.error('Not all points detected', error);
+            }
+            
+
+            try {
+                
+                //find angle between SNB and write text in left half of canvas
+                const snb_angle = calculateAngle('S',"N",'B','N')
+                write_text(ctx,canvas,25,140,`○ SNB: ${snb_angle.toFixed(2)}°`,'white')
+                draw_line(ctx,canvas,'S',"N",'blue')
+                draw_line(ctx,canvas,'N',"B",'blue')
+            }
+            catch (error) {
+                console.error('Not all points detected', error);
+            }
+
+            try {
+                
+                //come from intersection
+                const sngogn_angle = calculateAngle('N','S',"Gn","Go");
+                write_text(ctx,canvas,25,180,`○ SN-GoGn: ${sngogn_angle.toFixed(2)}°`,'white');
+                const sngogn_intersaction_point = calculateIntersection('S','N',"Gn","Go")
+                window.pred_points['sn_gogn'] = sngogn_intersaction_point
+                draw_line(ctx,canvas,'N',"sn_gogn",'blue')
+                draw_line(ctx,canvas,'S',"sn_gogn",'blue')
+                draw_line(ctx,canvas,'Gn',"sn_gogn",'blue')
+                draw_line(ctx,canvas,'Go',"sn_gogn",'blue')
+            }
+            catch (error) {
+                console.error('Not all points detected', error);
+            }
+
+            try {
+                //come from intersaction ANS PNS Mb Go
+                const snans_angle = calculateAngle('S','N','ANS',"N");
+                write_text(ctx,canvas,25,220,`○ SN-ANS: ${snans_angle.toFixed(2)}°`,'white');
+                draw_line(ctx,canvas,'S',"N",'blue')
+                draw_line(ctx,canvas,'N',"ANS",'blue')
+            }
+            catch (error) {
+                console.error('Not all points detected', error);
+            }
+
+        }
+        function draw_points(ctx, canvas) {
+            for (const key in window.pred_points) {
+                const point = window.pred_points[key];
+                const x = point[0] * canvas.height;
+                const y = point[1] * canvas.width;
+                
+                visualize_point(ctx,canvas,x,y,'red')
+                write_text(ctx,canvas,x,y,key,'white')
+                
+            }
+        }
+        //////////////////////////////////////////
+        const pred_points = {};
+        const original_pred_points = {};
+        let img = null;
+        function detect() {
             const input = document.getElementById('image-input');
             const formData = new FormData();
             formData.append('image', input.files[0]);
-    
+        
             fetch("{% url 'analyze' %}", {
                 method: 'POST',
                 body: formData,
@@ -160,14 +344,202 @@
             })
             .then(response => response.json())
             .then(data => {
-                const img = document.getElementById('uploaded-image');
+                const canvas = document.getElementById('draw-canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
                 img.src = `data:image/jpeg;base64,${data.image}`;
+                window.img = img;
+        
+                img.onload = function () {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+        
+                    // Draw detected points on the canvas
+                    window.pred_points = data.points
+                    window.original_pred_points = data.points
+                    
+                    get_analytics(ctx,canvas)
+                    draw_points(ctx,canvas)
+                };
             })
             .catch(error => {
                 console.error('Error analyzing image:', error);
             });
         }
-        
+
+        ////////////////////////////////////////////////////////////////
+        let selectedPoint = null;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+        let mindist = 99999;
+    
+        document.getElementById('draw-canvas').addEventListener('mousedown', function(event) {
+            const canvas = document.getElementById('draw-canvas');
+            const rect = canvas.getBoundingClientRect();
+            
+            const mouseX = ((event.clientX - rect.left)/rect.height)*canvas.height;
+            const mouseY = ((event.clientY - rect.top)/rect.width)*canvas.width;
+
+    
+            
+            //console.log(mouseX,mouseY,window.pred_points['N'][0]*canvas.height,window.pred_points['N'][1]*canvas.width,rect.height,rect.width,rect.left,rect.top)
+    
+            // Check if the mouse click is near any of the points
+            for (const key in window.pred_points) {
+                const point = window.pred_points[key];
+                const x = point[0] * canvas.height;
+                const y = point[1] * canvas.width;
+    
+                const distance = Math.sqrt((x - mouseX) ** 2 + (y - mouseY) ** 2)/100;
+                //console.log(distance)
+                if (distance <= 2) {
+                    if (distance < mindist){
+                        selectedPoint = key;
+                        offsetX = x - mouseX;
+                        offsetY = y - mouseY;
+                        mindist = distance;
+
+                    }
+                }
+            }
+            if (mindist <= 2){
+                isDragging = true;
+                //console.log(mindist,selectedPoint)
+            }
+        });
+    ////////////////////////////////////////////////////////////
+        document.getElementById('draw-canvas').addEventListener('mousemove', function(event) {
+            if (isDragging && selectedPoint !== null) {
+                const canvas = document.getElementById('draw-canvas');
+                const ctx = canvas.getContext('2d');
+    
+                const rect = canvas.getBoundingClientRect();
+            
+                const mouseX = ((event.clientX - rect.left)/800)*canvas.height;
+                const mouseY = ((event.clientY - rect.top)/800)*canvas.width;
+                
+                // Update the selected point's position
+                window.pred_points[selectedPoint][0] = (mouseX + offsetX) / canvas.height;
+                window.pred_points[selectedPoint][1] = (mouseY + offsetY) / canvas.width;
+                
+                //console.log((mouseX + offsetX) / canvas.height,(mouseY + offsetY) / canvas.width)
+                // Clear the canvas and redraw the points with their updated positions
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(window.img, 0, 0);
+                
+                get_analytics(ctx,canvas)
+                draw_points(ctx,canvas)
+            
+                // Crop and zoom the selected point
+                // Get the zoom canvas and its context
+                const zoomCanvas = document.getElementById('zoom-canvas');
+                const zoomCtx = zoomCanvas.getContext('2d');
+                
+                // Calculate the cropping area around the selected point
+                const cropSize = 200;
+                const cropX = Math.max(0, window.pred_points[selectedPoint][0] * canvas.height - cropSize / 2);
+                const cropY = Math.max(0, window.pred_points[selectedPoint][1] * canvas.width - cropSize / 2);
+
+                // Clear the zoom canvas
+                zoomCtx.clearRect(0, 0, zoomCanvas.width, zoomCanvas.height);
+
+                // Draw the cropped image on the zoom canvas
+                zoomCtx.drawImage(
+                    window.img,   // Source image
+                    cropX, // Source x-coordinate
+                    cropY, // Source y-coordinate
+                    cropSize, // Source width
+                    cropSize, // Source height
+                    0,      // Destination x-coordinate (start at the top-left of the canvas)
+                    0,      // Destination y-coordinate (start at the top-left of the canvas)
+                    zoomCanvas.width, // Destination width (to fill the canvas)
+                    zoomCanvas.height // Destination height (to fill the canvas)
+                );
+
+                // Draw a circle at the position of the selected point on the zoom-canvas
+                const zoomPointX = (window.pred_points[selectedPoint][0] * canvas.height - cropX) * (zoomCanvas.width / cropSize);
+                const zoomPointY = (window.pred_points[selectedPoint][1] * canvas.width - cropY) * (zoomCanvas.height / cropSize);
+
+                zoomCtx.beginPath();
+                zoomCtx.arc(zoomPointX, zoomPointY, 5, 0, 2 * Math.PI);
+                zoomCtx.fillStyle = 'red'; // Change the color as needed
+                zoomCtx.fill();
+                    }
+            
+        });
+    ////////////////////////////////////////////////////////////
+        document.getElementById('draw-canvas').addEventListener('mouseup', function() {
+            isDragging = false;
+            selectedPoint = null;
+            offsetX = 0;
+            offsetY = 0;
+            mindist = 99999;
+        });
+    ////////////////////////////////////////////////////////////
+    // Modify the addCustomPoint function in your JavaScript
+    function addCustomPoint() {
+        const canvas = document.getElementById('draw-canvas');
+        const ctx = canvas.getContext('2d');
+
+        const pointName = document.getElementById('point-name-input').value; // Read the point name from the input field
+        if (!pointName) {
+            alert('Please enter a point name.'); // Show an alert if no point name is entered
+            return;
+        }
+
+        const customPoint = [pointName, 700 / canvas.height, 100 / canvas.width, 2]; // Change visibility as needed
+
+        // Add the custom point to the pred_points object
+        window.pred_points[pointName] = [700 / canvas.height, 100 / canvas.width, 2];
+
+        // Draw the custom point on the canvas
+        const x = customPoint[1] * canvas.height;
+        const y = customPoint[2] * canvas.width;
+
+        ctx.beginPath();
+        ctx.arc(x, y, canvas.height / 200, 0, 2 * Math.PI);
+        ctx.fillStyle = 'blue'; // Change the color as needed
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.font = '20px serif';
+        ctx.fillStyle = 'white';
+        ctx.fillText(pointName, x + 10, y - 10);
+    }
+    ////////////////////////////////////////////////////////////
+    function save() {
+        const canvas = document.getElementById('draw-canvas');
+    
+        const imageInput = document.getElementById('image-input');
+        const image_name = document.getElementById('image-name-input')
+        const formData = new FormData();
+        formData.append('image', imageInput.files[0]);
+        formData.append('points', JSON.stringify(window.pred_points));
+        formData.append('image_name', image_name.value);
+    
+        fetch("{% url 'save' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'success') {
+                alert('Data saved successfully!');
+            } else {
+                alert('Failed to save data.');
+            }
+        })
+        .catch(error => {
+            console.error('Error saving data:', error);
+        });
+    }
+    
+
     </script>
     
 </body>

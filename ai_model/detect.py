@@ -4,7 +4,7 @@ def detect_landmarks(frame, model,imgsz=800,conf=0.01,iou=0.07):
     names = {
             0: 'S',1: 'Go',2: 'L1',3: 'U1',4: 'ULA',
             5: 'LLA',6: 'SN',7: 'GN`',8: 'PNS',9: 'ANS',
-            10: 'Ba',11: 'N',12: 'Or',13: 'Po',14: 'A',
+            10: 'Ar',11: 'N',12: 'Or',13: 'Po',14: 'A',
             15: 'B',16: 'Pg',17: 'Mb',18: 'Gn'
             }
     results = model(frame,conf=conf,iou=iou, verbose=False,imgsz=imgsz)

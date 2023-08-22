@@ -12,6 +12,9 @@ from ai_model.utils import draw_circle
 import base64
 from docx import Document
 import docx
+from copy import deepcopy
+from .models import Image,Landmark
+import json
 
 # Create your views here.
 class HomeView(generic.TemplateView):
@@ -22,12 +25,11 @@ class UploatView(generic.TemplateView):
     template_name = 'upload.html'
 
 
-def get_analytics(img,model):
-    h,w,_=img.shape
+def get_analytics(org_img,model):
+    img = deepcopy(org_img)
     imgsz = 800
-    img = cv2.resize(img,(imgsz,imgsz))
 
-    points = detect_landmarks(cv2.cvtColor(img,cv2.COLOR_BGR2RGB),model,imgsz=imgsz,conf=0.01,iou=0.07)
+    points = detect_landmarks(cv2.cvtColor(img,cv2.COLOR_BGR2RGB),model,imgsz=imgsz,conf=0.01,iou=0.01)
 
     for key,value in points.items():
         img = draw_circle(img,value,(0,255,0))
@@ -48,28 +50,34 @@ def get_analytics(img,model):
         cv2.putText(img,f'SNA: {sna_angle}',(10,90),cv2.FONT_HERSHEY_SIMPLEX,0.7,(0,255,0),2)
         analytics['SNA'] = f'{round(sna_angle,2)}°'
 
-    img = cv2.resize(img,(w,h))
-    return img,analytics
+    return img,analytics,points
 
-model = YOLO('ai_model/weights/best.pt')
+model = YOLO('ai_model/weights/best3.pt')
 
 class AnalysisView(generic.View):
 
     def post(self, request):
         global model
-        img = request.FILES['image']
-        img = cv2.imdecode(np.fromstring(img.read(), np.uint8), cv2.IMREAD_UNCHANGED)
-        img, analytics = get_analytics(img, model)
-        _, img_encoded = cv2.imencode('.jpg', img)
+        image = request.FILES['image']
+        image = cv2.imdecode(np.fromstring(image.read(), np.uint8), cv2.IMREAD_UNCHANGED)
+        image = cv2.resize(image,(800,800))
+        pred_image, analytics, points = get_analytics(image, model)
+
+        #normalize points
+        for key,value in points.items():
+            points[key] = (value[0]/image.shape[0],value[1]/image.shape[1])
+
+        _, img_encoded = cv2.imencode('.jpg', image)
         img_bytes = img_encoded.tobytes()
         img_base64 = base64.b64encode(img_bytes).decode('utf-8')  # Encode bytes as base64 string
 
 
         request.session['analysis'] = analytics
-        request.session['image'] = img_base64
+        # request.session['image'] = img_base64
 
         response_data = {
-            'image': img_base64,
+            'points': points,
+            'image' : img_base64,
         }
         return JsonResponse(response_data)
 
@@ -104,3 +112,25 @@ class DownloadReportView(generic.View):
         doc.save(response)
 
         return response
+    
+
+class Save(generic.View):
+
+    def post(self, request):
+        image_base64 = request.FILES['image']
+        img_name = request.POST.get('image_name')
+        
+        img = Image.objects.create(image=image_base64,name=img_name)
+
+        points = request.POST.get('points')
+        points = json.loads(points)
+        
+        for key,value in points.items():
+            print(value)
+            landmark = Landmark(image=img,name=key,x=float(value[0]),y=float(value[1]))
+            landmark.save()
+
+        response_data = {
+            'message': 'success'
+        }
+        return JsonResponse(response_data)
