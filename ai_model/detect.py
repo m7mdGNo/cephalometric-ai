@@ -33,7 +33,7 @@ def detect_landmarks(frame, model,imgsz=800,conf=0.01,iou=0.07):
     
     return landmarks
 
-
+#detect with roboflow model
 def detect_landmarks_roboflow(img,model,imgsz,conf=1,overlap=7):
     names = {
             1: 'S',10: 'Go',11: 'L1',12: 'U1',13: 'ULA',
