@@ -1,15 +1,10 @@
-Django==4.2.4
-numpy==1.25.2
-opencv-python==4.8.0.76
-pandas==2.0.3
-python-docx==0.8.11
-tqdm==4.66.1
-# ultralytics
-roboflow
+django==4.1.6
 django-environ==0.9.0
-psycopg2-binary
-urllib3==1.26.6
-Fabric3 @ git+https://github.com/ahmedyasserays/fabric.git@ff01d6b7c65ca6477261a92765e25b5f36fa8dfa
+psycopg2-binary==2.9.5
+psycopg2==2.9.5
+pillow==9.4.0
+django-filter==22.1
+stripe==5.2.0
+Fabric3@git+https://github.com/ahmedyasserays/fabric.git@ff01d6b7c65ca6477261a92765e25b5f36fa8dfa
 gunicorn==20.1.0
-celery==5.2.7
-django-celery-email==3.0.0
+roboflow
