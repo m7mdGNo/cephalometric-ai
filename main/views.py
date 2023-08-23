@@ -55,6 +55,7 @@ def get_analytics(org_img,model):
     return img,analytics,points
 
 model = YOLO('ai_model/weights/best_small.onnx')
+detect_landmarks(np.zeros((800,800,3),dtype='uint8'),model)
 # model.export(format='onnx',int8=True,imgsz=800)
 # rf = Roboflow(api_key="1hURdFeXGWbMZJ4SskBn")
 # project = rf.workspace("cephalometric-sjye2").project("cephalometric-nemic")
