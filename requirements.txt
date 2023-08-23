@@ -10,3 +10,4 @@ gunicorn==20.1.0
 # roboflow
 python-docx
 ultralytics
+# pip install torch==2.0.1+cpu torchvision==0.15.2+cpu -f https://download.pytorch.org/whl/torch_stable.html --no-cache-dir

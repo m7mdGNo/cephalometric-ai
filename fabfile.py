@@ -27,7 +27,7 @@ def update():
     with prefix('cd {}'.format(PROJECT_DIR)):
         run('git pull')
         with prefix('source {}/venv/bin/activate'.format(PROJECT_DIR)):
-            run('pip3 install -r requirements.txt')
+            run('pip3 install --no-cache-dir -r requirements.txt')
             run('python3 manage.py migrate --noinput')
             run('python3 manage.py collectstatic --noinput')
         sudo('cp infrastructure/nginx.conf /etc/nginx/sites-available/')
