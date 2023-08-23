@@ -31,7 +31,7 @@ DEBUG = env("DEBUG", cast=bool)
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS", cast=list)
 
-CSRF_TRUSTED_ORIGINS = ['*']
+CSRF_TRUSTED_ORIGINS = ['http://34.227.67.212/',]
 CORS_ORIGIN_WHITELIST = [
     'http://34.227.67.212/',
     "http://127.0.0.1:8000",
