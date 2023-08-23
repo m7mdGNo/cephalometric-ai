@@ -54,7 +54,7 @@ def get_analytics(org_img,model):
 
     return img,analytics,points
 
-model = YOLO('ai_model/weights/best3.pt')
+model = YOLO('ai_model/weights/best_small.pt')
 # rf = Roboflow(api_key="1hURdFeXGWbMZJ4SskBn")
 # project = rf.workspace("cephalometric-sjye2").project("cephalometric-nemic")
 # model = project.version(1).model
