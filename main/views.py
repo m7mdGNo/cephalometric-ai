@@ -15,7 +15,7 @@ import docx
 from copy import deepcopy
 from .models import Image,Landmark
 import json
-# from roboflow import Roboflow
+from roboflow import Roboflow
 
 # Create your views here.
 class HomeView(generic.TemplateView):
@@ -30,8 +30,8 @@ def get_analytics(org_img,model):
     img = deepcopy(org_img)
     imgsz = 800
 
-    points = detect_landmarks(cv2.cvtColor(img,cv2.COLOR_BGR2RGB),model,imgsz=imgsz,conf=0.01,iou=0.01)
-    # points = detect_landmarks_roboflow(img,model,imgsz,1,7)
+    # points = detect_landmarks(cv2.cvtColor(img,cv2.COLOR_BGR2RGB),model,imgsz=imgsz,conf=0.01,iou=0.01)
+    points = detect_landmarks_roboflow(img,model,imgsz,1,7)
 
     for key,value in points.items():
         img = draw_circle(img,value,(0,255,0))
@@ -54,12 +54,12 @@ def get_analytics(org_img,model):
 
     return img,analytics,points
 
-model = YOLO('ai_model/weights/best_small.onnx')
-detect_landmarks(np.zeros((800,800,3),dtype='uint8'),model)
+# model = YOLO('ai_model/weights/best_small.onnx')
+# detect_landmarks(np.zeros((800,800,3),dtype='uint8'),model)
 # model.export(format='onnx',int8=True,imgsz=800)
-# rf = Roboflow(api_key="1hURdFeXGWbMZJ4SskBn")
-# project = rf.workspace("cephalometric-sjye2").project("cephalometric-nemic")
-# model = project.version(1).model
+rf = Roboflow(api_key="1hURdFeXGWbMZJ4SskBn")
+project = rf.workspace("cephalometric-sjye2").project("cephalometric-nemic")
+model = project.version(1).model
 
 
 class AnalysisView(generic.View):
