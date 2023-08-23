@@ -11,3 +11,5 @@ psycopg2-binary
 urllib3==1.26.6
 Fabric3 @ git+https://github.com/ahmedyasserays/fabric.git@ff01d6b7c65ca6477261a92765e25b5f36fa8dfa
 gunicorn==20.1.0
+celery==5.2.7
+django-celery-email==3.0.0
