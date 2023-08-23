@@ -8,3 +8,4 @@ stripe==5.2.0
 Fabric3@git+https://github.com/ahmedyasserays/fabric.git@ff01d6b7c65ca6477261a92765e25b5f36fa8dfa
 gunicorn==20.1.0
 roboflow
+python-docs
