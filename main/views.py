@@ -54,7 +54,8 @@ def get_analytics(org_img,model):
 
     return img,analytics,points
 
-model = YOLO('ai_model/weights/best_small.pt')
+model = YOLO('ai_model/weights/best_small.onnx')
+# model.export(format='onnx',int8=True,imgsz=800)
 # rf = Roboflow(api_key="1hURdFeXGWbMZJ4SskBn")
 # project = rf.workspace("cephalometric-sjye2").project("cephalometric-nemic")
 # model = project.version(1).model
@@ -132,7 +133,6 @@ class Save(generic.View):
         points = json.loads(points)
         
         for key,value in points.items():
-            print(value)
             landmark = Landmark(image=img,name=key,x=float(value[0]),y=float(value[1]))
             landmark.save()
 
