@@ -538,6 +538,108 @@ document.getElementById('draw-canvas').addEventListener('mouseup', function() {
     }
     
     ////////////////////////////////////////////////////////////////
+    document.getElementById('draw-canvas').addEventListener('touchstart', function(event) {
+        const canvas = document.getElementById('draw-canvas');
+        const rect = canvas.getBoundingClientRect();
+    
+        const touchX = ((event.touches[0].clientX - rect.left) / rect.width) * canvas.width;
+        const touchY = ((event.touches[0].clientY - rect.top) / rect.height) * canvas.height;
+
+        console.log(touchX,touchY)
+    
+        // Check if the touch is near any of the points
+        for (const key in window.pred_points) {
+            const point = window.pred_points[key];
+            const x = point[0] * canvas.width;
+            const y = point[1] * canvas.height;
+    
+            const distance = Math.sqrt((x - touchX) ** 2 + (y - touchY) ** 2) / 100;
+    
+            if (distance <= 2) {
+                if (distance < mindist) {
+                    selectedPoint = key;
+                    offsetX = x - touchX;
+                    offsetY = y - touchY;
+                    mindist = distance;
+                }
+            }
+        }
+        if (mindist <= 2) {
+            isDragging = true;
+        }
+    });
+    document.getElementById('draw-canvas').addEventListener('touchmove', function(event) {
+        event.preventDefault();
+        if (isDragging && selectedPoint !== null) {
+            const canvas = document.getElementById('draw-canvas');
+            const ctx = canvas.getContext('2d');
+    
+            const rect = canvas.getBoundingClientRect();
+    
+            const touchX = ((event.touches[0].clientX - rect.left) / rect.width) * canvas.width;
+            const touchY = ((event.touches[0].clientY - rect.top) / rect.height) * canvas.height;
+    
+            // Update the selected point's position
+            window.pred_points[selectedPoint][0] = (touchX + offsetX) / canvas.width;
+            window.pred_points[selectedPoint][1] = (touchY + offsetY) / canvas.height;
+    
+            // Clear the canvas and redraw the points with their updated positions
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(window.img, 0, 0);
+    
+            get_analytics(ctx, canvas);
+            draw_points(ctx, canvas);
+    
+            // Crop and zoom the selected point
+            // Get the zoom canvas and its context
+            const zoomCanvas = document.getElementById('zoom-canvas');
+            const zoomCtx = zoomCanvas.getContext('2d');
+    
+            // Calculate the cropping area around the selected point
+            const cropSize = 200;
+            const cropX = Math.max(0, window.pred_points[selectedPoint][0] * canvas.width - cropSize / 2);
+            const cropY = Math.max(0, window.pred_points[selectedPoint][1] * canvas.height - cropSize / 2);
+    
+            // Clear the zoom canvas
+            zoomCtx.clearRect(0, 0, zoomCanvas.width, zoomCanvas.height);
+    
+            // Draw the cropped image on the zoom canvas
+            zoomCtx.drawImage(
+                window.img,   // Source image
+                cropX, // Source x-coordinate
+                cropY, // Source y-coordinate
+                cropSize, // Source width
+                cropSize, // Source height
+                0,      // Destination x-coordinate (start at the top-left of the canvas)
+                0,      // Destination y-coordinate (start at the top-left of the canvas)
+                zoomCanvas.width, // Destination width (to fill the canvas)
+                zoomCanvas.height // Destination height (to fill the canvas)
+            );
+    
+            // Draw a circle at the position of the selected point on the zoom-canvas
+            const zoomPointX = (
+                window.pred_points[selectedPoint][0] * canvas.width - cropX
+            ) * (zoomCanvas.width / cropSize);
+            const zoomPointY = (
+                window.pred_points[selectedPoint][1] * canvas.height - cropY
+            ) * (zoomCanvas.height / cropSize);
+            if (!isMobile()) {
+                zoomCtx.beginPath();
+                zoomCtx.arc(zoomPointX, zoomPointY, 5, 0, 2 * Math.PI);
+                zoomCtx.fillStyle = 'red'; // Change the color as needed
+                zoomCtx.fill();
+            }
+        }
+    });
+    document.getElementById('draw-canvas').addEventListener('touchend', function() {
+        isDragging = false;
+        selectedPoint = null;
+        offsetX = 0;
+        offsetY = 0;
+        mindist = 99999;
+    });
+    ////////////////////////////////////////////////////////////////
+
 
     </script>
     
