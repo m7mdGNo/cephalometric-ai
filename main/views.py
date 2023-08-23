@@ -3,7 +3,7 @@ import io
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views import generic
-# from ultralytics import YOLO
+from ultralytics import YOLO
 import numpy as np
 import cv2
 from ai_model.extract import extract_ANB,extract_SNA,extract_SNB
@@ -15,7 +15,7 @@ import docx
 from copy import deepcopy
 from .models import Image,Landmark
 import json
-from roboflow import Roboflow
+# from roboflow import Roboflow
 
 # Create your views here.
 class HomeView(generic.TemplateView):
@@ -54,10 +54,10 @@ def get_analytics(org_img,model):
 
     return img,analytics,points
 
-# model = YOLO('ai_model/weights/best3.pt')
-rf = Roboflow(api_key="1hURdFeXGWbMZJ4SskBn")
-project = rf.workspace("cephalometric-sjye2").project("cephalometric-nemic")
-model = project.version(1).model
+model = YOLO('ai_model/weights/best3.pt')
+# rf = Roboflow(api_key="1hURdFeXGWbMZJ4SskBn")
+# project = rf.workspace("cephalometric-sjye2").project("cephalometric-nemic")
+# model = project.version(1).model
 
 
 class AnalysisView(generic.View):
