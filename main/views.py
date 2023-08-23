@@ -30,8 +30,8 @@ def get_analytics(org_img,model):
     img = deepcopy(org_img)
     imgsz = 800
 
-    # points = detect_landmarks(cv2.cvtColor(img,cv2.COLOR_BGR2RGB),model,imgsz=imgsz,conf=0.01,iou=0.01)
-    points = detect_landmarks_roboflow(img,model,imgsz,1,7)
+    points = detect_landmarks(cv2.cvtColor(img,cv2.COLOR_BGR2RGB),model,imgsz=imgsz,conf=0.01,iou=0.01)
+    # points = detect_landmarks_roboflow(img,model,imgsz,1,7)
 
     for key,value in points.items():
         img = draw_circle(img,value,(0,255,0))

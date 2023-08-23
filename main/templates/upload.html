@@ -334,14 +334,14 @@
             const input = document.getElementById('image-input');
             const formData = new FormData();
             formData.append('image', input.files[0]);
-            const csrfToken = getCookie('csrftoken');
+            formData.append('csrfmiddlewaretoken','{{ csrf_token }}')
         
             fetch("{% url 'analyze' %}", {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRFToken': csrfToken,
-                    'csrfToken': csrfToken
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'csrfToken': '{{ csrf_token }}'
                 },
             })
             .then(response => response.json())
