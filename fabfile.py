@@ -1,7 +1,7 @@
 import os
 from fabric.api import *
 
-env.hosts = ['ubuntu@52.90.235.98']
+env.hosts = ['ubuntu@54.158.53.211']
 PROJECT_DIR = '/home/ubuntu/cephalometric'
 
 
