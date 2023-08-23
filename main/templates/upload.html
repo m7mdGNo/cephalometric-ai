@@ -95,23 +95,47 @@
             margin-top: 0.5rem;
         }
         /* Hide zoom canvas on small devices */
+        @media (max-width: 992px) {
+            #zoom-canvas {
+                width:300px;
+                height:300px
+            }
+
+            #draw-canvas{
+                width:800px;
+                height:800px
+            }
+
+        }
+
+
         
         @media (max-width: 768px) {
             #zoom-canvas {
                 display: none;
             }
             #draw-canvas{
-                width:400px;
-                height:400px
+                width:700px;
+                height:700px
             }
+
         }
         @media (max-width: 576px) {
             #zoom-canvas {
                 display: none;
             }
             #draw-canvas{
-                width:400px;
-                height:400px
+                width:500px;
+                height:500px
+            }
+        }
+        @media (max-width: 400px) {
+            #zoom-canvas {
+                display: none;
+            }
+            #draw-canvas{
+                width:300px;
+                height:300px
             }
         }
 
@@ -124,7 +148,7 @@
             <div class="col-md-8">
                 <canvas id="draw-canvas" class="img-fluid" style="width:800px; height:800px max-width:800px; max-height:800px;" alt="Analyzed Image"></canvas>
             </div>
-            <div class="col-md-4 text-center-column ">
+            <div class="col-md-4 text-top-column ">
                 <div class="row-md-6">
     
                     <input type="file" id="image-input" style="display: none;">
@@ -664,16 +688,7 @@ document.getElementById('draw-canvas').addEventListener('mouseup', function() {
 
     ////////////////////////////////////////////////////////////////
     //change canvas size in resizing screens
-
-    window.addEventListener('resize', function() {
-        var w = document.documentElement.clientWidth; // Use viewport width
-        var h = document.documentElement.clientHeight; // Use viewport height
-        let min_cord = Math.min(w, h);
-        console.log(min_cord);
-        document.getElementById('draw-canvas').style.width = w + 'px';
-        document.getElementById('draw-canvas').style.height = h + 'px';
-    });
-
+//
 
     </script>
     
