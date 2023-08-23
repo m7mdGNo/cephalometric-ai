@@ -29,8 +29,12 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG", cast=bool)
 
-# ALLOWED_HOSTS = env("ALLOWED_HOSTS", cast=list)
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = env("ALLOWED_HOSTS", cast=list)
+
+CORS_ORIGIN_WHITELIST = [
+    'http://34.227.67.212/',
+    "http://127.0.0.1:8000",
+]
 
 # Application definition
 
@@ -78,12 +82,7 @@ WSGI_APPLICATION = 'cephalometric.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-} 
+DATABASES = {"default": env.db()}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
