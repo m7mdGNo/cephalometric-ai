@@ -1,0 +1,23 @@
+{% load static is_active %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <!-- Hamburger Icon for Small Screens -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Site Name -->
+        <a class="navbar-brand font-weight-bold" href="{% url 'home' %}">Cephalometric Analysis</a>
+
+        <!-- Collapsible Navigation Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav mx-auto">
+                <a class="nav-item nav-link {% is_active 'home' %}" href="{% url 'home' %}">Home</a>
+                <a class="nav-item nav-link {% is_active 'upload' %}" href="{% url 'upload' %}">Analysis</a>
+            </div>
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="#">Login</a>
+            </div>
+        </div>
+    </div>
+</nav>

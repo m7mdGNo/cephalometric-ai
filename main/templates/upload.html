@@ -94,11 +94,17 @@
         .mt-2 {
             margin-top: 0.5rem;
         }
+        /* Hide zoom canvas on small devices */
+        @media (max-width: 768px) {
+            #zoom-canvas {
+                display: none;
+            }
+        }
 
     </style>
 </head>
 <body>
-
+    {% include 'parts/header.html' %}
     <div class="center-content">
         <div class="row">
             <div class="col-md-8">
