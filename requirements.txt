@@ -53,7 +53,7 @@ sympy==1.12
 tqdm==4.66.1
 typing_extensions==4.7.1
 tzdata==2023.3
-ultralytics
+# ultralytics
 urllib3==2.0.4
 wget==3.2
 zipp==3.16.2
