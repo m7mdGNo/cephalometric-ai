@@ -107,16 +107,16 @@
             }
 
         }
-
-
         
         @media (max-width: 768px) {
             #zoom-canvas {
-                display: none;
+                width:200px;
+                height:200px
             }
+
             #draw-canvas{
-                width:700px;
-                height:700px
+                width:600px;
+                height:600px
             }
 
         }
@@ -125,8 +125,8 @@
                 display: none;
             }
             #draw-canvas{
-                width:500px;
-                height:500px
+                width:400px;
+                height:400px
             }
         }
         @media (max-width: 400px) {
@@ -380,7 +380,6 @@
             const formData = new FormData();
             formData.append('image', input.files[0]);
             formData.append('csrfmiddlewaretoken','{{ csrf_token }}')
-        
             fetch("{% url 'analyze' %}", {
                 method: 'POST',
                 body: formData,
@@ -392,8 +391,10 @@
             .then(response => response.json())
             .then(data => {
                 const canvas = document.getElementById('draw-canvas');
+                console.log(canvas.width,canvas.height)
                 const ctx = canvas.getContext('2d');
                 const img = new Image();
+                //load img.src from canvas
                 img.src = `data:image/jpeg;base64,${data.image}`;
                 window.img = img;
         
