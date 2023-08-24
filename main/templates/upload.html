@@ -675,45 +675,7 @@ document.getElementById('draw-canvas').addEventListener('mouseup', function() {
     });
     ////////////////////////////////////////////////////////////////
     
-    // Add touch event listeners for the canvas
-const canvas = document.getElementById('draw-canvas');
-let lastTouchDistance = null;
-
-canvas.addEventListener('touchstart', function(event) {
-    if (event.touches.length === 2) {
-        lastTouchDistance = calculateTouchDistance(event.touches[0], event.touches[1]);
-    }
-});
-
-canvas.addEventListener('touchmove', function(event) {
-    if (event.touches.length === 2 && lastTouchDistance !== null) {
-        const newTouchDistance = calculateTouchDistance(event.touches[0], event.touches[1]);
-        const scaleDelta = newTouchDistance / lastTouchDistance;
-
-        // Adjust the canvas size based on the scale factor
-        const newCanvasWidth = canvas.width * scaleDelta;
-        const newCanvasHeight = canvas.height * scaleDelta;
-
-        canvas.width = newCanvasWidth;
-        canvas.height = newCanvasHeight;
-
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(window.img, 0, 0, newCanvasWidth, newCanvasHeight);
-
-        lastTouchDistance = newTouchDistance;
-    }
-});
-
-canvas.addEventListener('touchend', function() {
-    lastTouchDistance = null;
-});
-
-// Helper function to calculate distance between two touches
-function calculateTouchDistance(touch1, touch2) {
-    const dx = touch1.clientX - touch2.clientX;
-    const dy = touch1.clientY - touch2.clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-}
+    
 
     ////////////////////////////////////////////////////////////////
     //change canvas size in resizing screens
