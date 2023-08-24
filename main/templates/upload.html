@@ -94,20 +94,7 @@
         .mt-2 {
             margin-top: 0.5rem;
         }
-        /* Hide zoom canvas on small devices */
-        @media (max-width: 992px) {
-            #zoom-canvas {
-                width:200px;
-                height:200px
-            }
 
-            #draw-canvas{
-                width:600px;
-                height:600px
-            }
-
-        }
-        
         @media (max-width: 768px) {
             #zoom-canvas {
                 width:200px;
@@ -120,6 +107,7 @@
             }
 
         }
+
         @media (max-width: 576px) {
             #zoom-canvas {
                 display: none;
@@ -129,6 +117,7 @@
                 height:400px
             }
         }
+
         @media (max-width: 400px) {
             #zoom-canvas {
                 display: none;
@@ -148,7 +137,7 @@
             <div class="col-md-8">
                 <canvas id="draw-canvas" class="img-fluid" style="width:800px; height:800px max-width:800px; max-height:800px;" alt="Analyzed Image"></canvas>
             </div>
-            <div class="col-md-4 text-top-column ">
+            <div class="col-md-4 text-center-column ">
                 <div class="row-md-6">
     
                     <input type="file" id="image-input" style="display: none;">
@@ -423,6 +412,7 @@ let offsetX = 0;
 let offsetY = 0;
 let isDragging = false;
 let mindist = 99999;
+let dist_thresh = 10;
 
 document.getElementById('draw-canvas').addEventListener('mousedown', function(event) {
     const canvas = document.getElementById('draw-canvas');
@@ -437,9 +427,9 @@ document.getElementById('draw-canvas').addEventListener('mousedown', function(ev
         const x = point[0] * canvas.width;
         const y = point[1] * canvas.height;
 
-        const distance = Math.sqrt((x - mouseX) ** 2 + (y - mouseY) ** 2) / 100;
+        const distance = Math.sqrt((x - mouseX) ** 2 + (y - mouseY) ** 2);
 
-        if (distance <= 2) {
+        if (distance <= dist_thresh) {
             if (distance < mindist) {
                 selectedPoint = key;
                 offsetX = x - mouseX;
@@ -448,7 +438,7 @@ document.getElementById('draw-canvas').addEventListener('mousedown', function(ev
             }
         }
     }
-    if (mindist <= 2) {
+    if (mindist <= dist_thresh) {
         isDragging = true;
     }
 });
@@ -598,9 +588,9 @@ document.getElementById('draw-canvas').addEventListener('mouseup', function() {
             const x = point[0] * canvas.width;
             const y = point[1] * canvas.height;
     
-            const distance = Math.sqrt((x - touchX) ** 2 + (y - touchY) ** 2) / 100;
+            const distance = Math.sqrt((x - touchX) ** 2 + (y - touchY) ** 2);
     
-            if (distance <= 2) {
+            if (distance <= dist_thresh) {
                 if (distance < mindist) {
                     selectedPoint = key;
                     offsetX = x - touchX;
@@ -609,13 +599,13 @@ document.getElementById('draw-canvas').addEventListener('mouseup', function() {
                 }
             }
         }
-        if (mindist <= 2) {
+        if (mindist <= dist_thresh) {
             isDragging = true;
         }
     });
     document.getElementById('draw-canvas').addEventListener('touchmove', function(event) {
-        event.preventDefault();
         if (isDragging && selectedPoint !== null) {
+            event.preventDefault();
             const canvas = document.getElementById('draw-canvas');
             const ctx = canvas.getContext('2d');
     
@@ -685,7 +675,45 @@ document.getElementById('draw-canvas').addEventListener('mouseup', function() {
     });
     ////////////////////////////////////////////////////////////////
     
+    // Add touch event listeners for the canvas
+const canvas = document.getElementById('draw-canvas');
+let lastTouchDistance = null;
 
+canvas.addEventListener('touchstart', function(event) {
+    if (event.touches.length === 2) {
+        lastTouchDistance = calculateTouchDistance(event.touches[0], event.touches[1]);
+    }
+});
+
+canvas.addEventListener('touchmove', function(event) {
+    if (event.touches.length === 2 && lastTouchDistance !== null) {
+        const newTouchDistance = calculateTouchDistance(event.touches[0], event.touches[1]);
+        const scaleDelta = newTouchDistance / lastTouchDistance;
+
+        // Adjust the canvas size based on the scale factor
+        const newCanvasWidth = canvas.width * scaleDelta;
+        const newCanvasHeight = canvas.height * scaleDelta;
+
+        canvas.width = newCanvasWidth;
+        canvas.height = newCanvasHeight;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(window.img, 0, 0, newCanvasWidth, newCanvasHeight);
+
+        lastTouchDistance = newTouchDistance;
+    }
+});
+
+canvas.addEventListener('touchend', function() {
+    lastTouchDistance = null;
+});
+
+// Helper function to calculate distance between two touches
+function calculateTouchDistance(touch1, touch2) {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+}
 
     ////////////////////////////////////////////////////////////////
     //change canvas size in resizing screens
