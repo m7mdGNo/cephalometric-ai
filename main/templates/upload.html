@@ -652,18 +652,19 @@ document.getElementById('draw-canvas').addEventListener('mouseup', function() {
             );
     
             // Draw a circle at the position of the selected point on the zoom-canvas
+
+            //draw all point in zoom canvas
             const zoomPointX = (
                 window.pred_points[selectedPoint][0] * canvas.width - cropX
             ) * (zoomCanvas.width / cropSize);
             const zoomPointY = (
                 window.pred_points[selectedPoint][1] * canvas.height - cropY
             ) * (zoomCanvas.height / cropSize);
-            if (!isMobile()) {
-                zoomCtx.beginPath();
-                zoomCtx.arc(zoomPointX, zoomPointY, 5, 0, 2 * Math.PI);
-                zoomCtx.fillStyle = 'red'; // Change the color as needed
-                zoomCtx.fill();
-            }
+
+            zoomCtx.beginPath();
+            zoomCtx.arc(zoomPointX, zoomPointY, 5, 0, 2 * Math.PI);
+            zoomCtx.fillStyle = 'red'; // Change the color as needed
+            zoomCtx.fill();
         }
     });
     document.getElementById('draw-canvas').addEventListener('touchend', function() {
@@ -675,7 +676,7 @@ document.getElementById('draw-canvas').addEventListener('mouseup', function() {
     });
     ////////////////////////////////////////////////////////////////
     
-    
+
 
     ////////////////////////////////////////////////////////////////
     //change canvas size in resizing screens
