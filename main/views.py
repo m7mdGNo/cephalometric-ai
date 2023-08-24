@@ -16,14 +16,17 @@ from copy import deepcopy
 from .models import Image,Landmark
 import json
 from roboflow import Roboflow
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 # Create your views here.
 class HomeView(generic.TemplateView):
     template_name = 'home.html'
 
 
-class UploatView(generic.TemplateView):
+class UploatView(LoginRequiredMixin,generic.TemplateView):
     template_name = 'upload.html'
+    login_url = '/login/'
 
 
 def get_analytics(org_img,model):
@@ -62,7 +65,8 @@ project = rf.workspace("cephalometric-sjye2").project("cephalometric-nemic")
 model = project.version(1).model
 
 
-class AnalysisView(generic.View):
+class AnalysisView(LoginRequiredMixin,generic.View):
+    login_url = '/login/'
 
     def post(self, request):
         global model

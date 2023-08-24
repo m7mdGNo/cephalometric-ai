@@ -16,7 +16,12 @@
                 <a class="nav-item nav-link {% is_active 'upload' %}" href="{% url 'upload' %}">Analysis</a>
             </div>
             <div class="navbar-nav">
-                <a class="nav-item nav-link" href="#">Login</a>
+                {% if current_user.is_authenticated %}
+                    <p class="nav-item nav-link">{{current_user.username}}</p>
+                    <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                    <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                {% endif %}
             </div>
         </div>
     </div>
