@@ -13,11 +13,11 @@
 <body>
     {% include 'parts/header.html' %}
     <div class="center-content">
-        <div class="row">
-            <div class="col-md-8">
+        <div class="custom-row">
+            <div class='left-side'>
                 <canvas id="draw-canvas" class="img-fluid" alt="Analyzed Image"></canvas>
             </div>
-            <div class="col-md-4 text-center-column ">
+            <div class="right-side text-center-column ">
                 <div class="row-md-6">
     
                     <input type="file" id="image-input" style="display: none;">
@@ -32,7 +32,7 @@
                         </div>
                     </div>
     
-                    <div class="d-flex justify-content-between mb-2">
+                    <div class="btns-container d-flex justify-content-between mb-2">
                         <button id="download-button" class="btn btn-lg btn-info shadow-lg full-width-button" onclick="window.location.href='/download/';">Download Report</button>
                         <button class="btn btn-lg btn-danger shadow-lg full-width-button" onclick="detect();">Reset points</button>
                     </div>
@@ -40,8 +40,8 @@
                     <button type="submit" class="btn btn-primary btn-lg mb-2 shadow-lg full-width-button" onclick="save()">Save</button>
 
                 </div>
-                <div class="row-md-6 mt-4">
-                    <canvas id="zoom-canvas" class="img-fluid" style="width:400px; height:400px; background-color:#f2f2f2;" alt="Analyzed Image"></canvas>
+                <div class="zoon-parent row-md-6 mt-4">
+                    <canvas id="zoom-canvas" class="img-fluid" style=" background-color:#f2f2f2;" alt="Analyzed Image"></canvas>
                 </div>
             </div>
         </div>
@@ -70,6 +70,8 @@
                 canvas.width = img.width;
                 canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
+                canvas.style.display = 'block';
+                
             };
     
             document.getElementById('download-button').style.display = 'block';
@@ -382,6 +384,7 @@ document.getElementById('draw-canvas').addEventListener('mousemove', function(ev
 });
 
 document.getElementById('draw-canvas').addEventListener('mouseup', function() {
+    document.getElementById('zoom-canvas').style.display = 'none';
     isDragging = false;
     selectedPoint = null;
     offsetX = 0;
@@ -486,6 +489,7 @@ document.getElementById('draw-canvas').addEventListener('mouseup', function() {
     document.getElementById('draw-canvas').addEventListener('touchmove', function(event) {
         if (isDragging && selectedPoint !== null) {
             event.preventDefault();
+            document.getElementById('zoom-canvas').style.display = 'block';
             const canvas = document.getElementById('draw-canvas');
             const ctx = canvas.getContext('2d');
     
@@ -548,6 +552,7 @@ document.getElementById('draw-canvas').addEventListener('mouseup', function() {
         }
     });
     document.getElementById('draw-canvas').addEventListener('touchend', function() {
+        document.getElementById('zoom-canvas').style.display = 'block';
         isDragging = false;
         selectedPoint = null;
         offsetX = 0;

@@ -1,10 +1,8 @@
 
-#draw-canvas {
-    width: 800px;
-    height: 800px;
-}
+
 /* Custom styles for centering */
 .center-content {
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,8 +14,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
     font-family: 'Roboto', sans-serif; /* Change font */
     color: #333; /* Change text color */
     padding: 2rem; /* Add padding */
@@ -90,8 +87,108 @@ h2 {
     margin-top: 0.5rem;
 }
 
+#draw-canvas {
+    width: 100%;
+    aspect-ratio: 1/1;
+    max-width: 800px;
+}
 
-@media (max-width: 768px) {
+#zoom-canvas {
+    width: 100%;
+    aspect-ratio: 1/1;
+    max-width: 400px;
+}
+
+
+.custom-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+
+}
+
+.custom-row .left-side {
+    /* width: calc(((100% - 12px)/3)*2); */
+    flex: 1;
+    max-width: 800px;
+}
+
+
+.zoon-parent {
+    width: 100%;
+}
+
+
+@media (min-width: 541px){
+    #zoom-canvas {
+        display: block !important;
+    }    
+}
+
+@media (max-width: 1024px) {
+    #draw-canvas, #zoom-canvas {
+        display: none;
+    }
+    .custom-row {
+        flex-direction: column;
+
+    }
+    .custom-row>div {
+        width: 100% !important;
+    }
+
+    .custom-row .right-side{
+        display: flex;
+        gap: 12px;
+        flex-direction: row;
+    }
+
+    .custom-row .right-side>div {
+        width: calc((100% - 12px) / 2);
+    }
+    .right-side .mt-4 {
+        margin-top: 0 !important;
+    }
+
+} 
+
+
+
+@media (max-width: 540px) {
+    .btns-container {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .custom-row .right-side{
+        flex-direction: column-reverse;
+    }
+
+    .custom-row .right-side>div {
+        width: 100%;
+    }
+    .text-center-column {
+        padding: 0;
+    }
+
+
+    body {
+        padding: 12px;
+    }
+    .center-content {
+        min-height: 0; /* Adjust if needed */
+    }
+
+}
+
+@media (max-width: 360px) {
+    .navbar-brand {
+        font-size: 1.05rem;
+    }
+}
+/* @media (max-width: 768px) {
     #zoom-canvas {
         width: 50%;
         height: 50%;
@@ -121,4 +218,4 @@ h2 {
         width: 30%;
         height: 30%;
     }
-}
+} */
