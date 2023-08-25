@@ -1,0 +1,124 @@
+
+#draw-canvas {
+    width: 800px;
+    height: 800px;
+}
+/* Custom styles for centering */
+.center-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Adjust if needed */
+}
+
+
+.text-center-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-family: 'Roboto', sans-serif; /* Change font */
+    color: #333; /* Change text color */
+    padding: 2rem; /* Add padding */
+}
+
+.text-top-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+    align-items: top;
+    text-align: top;
+    font-family: 'Roboto', sans-serif; /* Change font */
+    color: #333; /* Change text color */
+    padding: 2rem; /* Add padding */
+}
+
+/* Increase spacing between components */
+.text-center-column p {
+    margin: 1rem 0;
+}
+
+/* Animate the button on hover */
+.btn-primary {
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1); /* Add shadow */
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Set background color */
+body {
+    background-color: #ffffff;
+}
+
+/* Custom styles for h1 */
+h1 {
+    font-weight: bold; /* Make the h1 more bold */
+    margin-bottom: 1rem; /* Add spacing below h1 */
+}
+h2 {
+    font-weight: bold; /* Make the h1 more bold */
+    margin-bottom: 1rem; /* Add spacing below h1 */
+}
+
+/* Custom styles for buttons */
+.full-width-button {
+    width: 100%; /* Set width to 100% */
+}
+
+#uploaded-image {
+    max-width: 800px;
+    max-height: 800px;
+    width: auto;
+    height: auto;
+}
+/* Set a maximum width for the uploaded image to prevent excessive scaling on large screens */
+#uploaded-image {
+    max-width: 100%;
+}
+
+/* Adjust margins for improved spacing on smaller devices */
+.mb-4 {
+    margin-bottom: 1rem;
+}
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+
+@media (max-width: 768px) {
+    #zoom-canvas {
+        width: 50%;
+        height: 50%;
+    }
+
+    #draw-canvas {
+        width: 50%;
+        height: 50%;
+    }
+}
+
+@media (max-width: 576px) {
+    #zoom-canvas {
+        display: none;
+    }
+    #draw-canvas {
+        width: 40%;
+        height: 40%;
+    }
+}
+
+@media (max-width: 400px) {
+    #zoom-canvas {
+        display: none;
+    }
+    #draw-canvas {
+        width: 30%;
+        height: 30%;
+    }
+}
