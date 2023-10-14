@@ -33,8 +33,8 @@ def get_analytics(org_img,model):
     img = deepcopy(org_img)
     imgsz = 800
 
-    # points = detect_landmarks(cv2.cvtColor(img,cv2.COLOR_BGR2RGB),model,imgsz=imgsz,conf=0.01,iou=0.01)
-    points = detect_landmarks_roboflow(img,model,imgsz,1,7)
+    points = detect_landmarks(cv2.cvtColor(img,cv2.COLOR_BGR2RGB),model,imgsz=imgsz,conf=0.01,iou=0.01)
+    # points = detect_landmarks_roboflow(img,model,imgsz,1,7)
 
     for key,value in points.items():
         img = draw_circle(img,value,(0,255,0))
@@ -57,12 +57,12 @@ def get_analytics(org_img,model):
 
     return img,analytics,points
 
-# model = YOLO('ai_model/weights/best_small.onnx')
-# detect_landmarks(np.zeros((800,800,3),dtype='uint8'),model)
+model = YOLO('ai_model/weights/best3.pt')
+detect_landmarks(np.zeros((800,800,3),dtype='uint8'),model)
 # model.export(format='onnx',int8=True,imgsz=800)
-rf = Roboflow(api_key="1hURdFeXGWbMZJ4SskBn")
-project = rf.workspace("cephalometric-sjye2").project("cephalometric-nemic")
-model = project.version(1).model
+# rf = Roboflow(api_key="1hURdFeXGWbMZJ4SskBn")
+# project = rf.workspace("cephalometric-sjye2").project("cephalometric-nemic")
+# model = project.version(1).model
 
 
 class AnalysisView(LoginRequiredMixin,generic.View):
@@ -92,38 +92,6 @@ class AnalysisView(LoginRequiredMixin,generic.View):
             'image' : img_base64,
         }
         return JsonResponse(response_data)
-
-
-class DownloadReportView(generic.View):
-    def get(self, request):
-        # Get the stored image and analytics data from the session
-        img_base64 = request.session.get('image')
-        analytics = request.session.get('analysis')
-
-        # Decode the base64 image data
-        img_bytes = base64.b64decode(img_base64)
-
-        # Create a new Word document
-        doc = Document()
-        
-        # Add the image to the document
-        img_io = io.BytesIO(img_bytes)
-        doc.add_picture(img_io, width=docx.shared.Inches(6))  # Adjust the width as needed
-
-        # Add a section break and analytics data
-        # doc.add_section()  # Add a section break
-        # doc.add_heading('Analytics', level=1)
-        for key, value in analytics.items():
-            doc.add_paragraph(f'{key}: {value}')
-
-        # Create a response with the Word document content
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-        response['Content-Disposition'] = 'attachment; filename="analysis_report.docx"'
-
-        # Save the document to the response
-        doc.save(response)
-
-        return response
     
 
 class Save(generic.View):
