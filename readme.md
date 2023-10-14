@@ -92,7 +92,7 @@ The goal is to create a web app that can be used by the clinicians and researche
 
 ## Examples
 ![home page](readme_images/home.png)
-![site](images/video.gif)
+![site](readme_images/video.gif)
 
 
 ## Installation
