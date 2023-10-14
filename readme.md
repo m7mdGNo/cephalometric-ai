@@ -91,7 +91,6 @@ The goal is to create a web app that can be used by the clinicians and researche
 - displays the detected landmarks on the image.
 
 ## Examples
-![home page](readme_images/home.png)
 ![site](readme_images/video.gif)
 
 
