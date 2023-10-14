@@ -98,7 +98,7 @@ The goal is to create a web app that can be used by the clinicians and researche
 Clone the repository:
 
 ```bash
-$ https://github.com/m7mdGNo/cephalometric/tree/main
+$ git clone https://github.com/m7mdGNo/cephalometric.git
 $ cd cephalometric
 ```
 
